@@ -6,8 +6,10 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.util.ByteSource;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +27,7 @@ public class CustomRealm extends AuthorizingRealm {
     Map<String, String> userMap = new HashMap<>(16);
 
     {
-        userMap.put("cheng", "123");
+        userMap.put("cheng", "66f469382db2328c876b700deb336220");
 
         super.setName("customRealm");
     }
@@ -61,6 +63,9 @@ public class CustomRealm extends AuthorizingRealm {
         SimpleAuthenticationInfo authenticationInfo =
                 new SimpleAuthenticationInfo(username, password, "customRealm");
 
+        // 设置加密的 盐
+        authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("cheng"));
+
         return authenticationInfo;
     }
 
@@ -83,7 +88,20 @@ public class CustomRealm extends AuthorizingRealm {
         return set;
     }
 
+    /**
+     * 模拟数据库查询凭证
+     *
+     * @param username
+     * @return
+     */
     private String getPasswordByUsername(String username) {
         return userMap.get(username);
+    }
+
+    public static void main(String[] args) {
+
+        // 密码 + 盐 加密后的结果
+        Md5Hash md5Hash = new Md5Hash("123", "cheng");
+        System.out.println(md5Hash.toString());
     }
 }

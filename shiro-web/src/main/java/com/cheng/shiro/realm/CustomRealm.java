@@ -1,5 +1,7 @@
 package com.cheng.shiro.realm;
 
+import com.cheng.dao.UserDao;
+import com.cheng.vo.User;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -11,9 +13,9 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
 
-import java.util.HashMap;
+import javax.annotation.Resource;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,13 +26,8 @@ import java.util.Set;
  */
 public class CustomRealm extends AuthorizingRealm {
 
-    Map<String, String> userMap = new HashMap<>(16);
-
-    {
-        userMap.put("cheng", "66f469382db2328c876b700deb336220");
-
-        super.setName("customRealm");
-    }
+    @Resource
+    private UserDao userDao;
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
@@ -64,19 +61,16 @@ public class CustomRealm extends AuthorizingRealm {
                 new SimpleAuthenticationInfo(username, password, "customRealm");
 
         // 设置加密的 盐
-        authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes("cheng"));
+        authenticationInfo.setCredentialsSalt(ByteSource.Util.bytes(username));
 
         return authenticationInfo;
     }
 
     private Set<String> getRolesByUserName(String username) {
 
-        Set<String> set = new HashSet<>();
-
         // 从数据库或者缓存中获取角色数据
-        set.add("admin");
-        set.add("user");
-        return set;
+        List<String> list = userDao.queryRolesByUsername(username);
+        return new HashSet<>(list);
     }
 
     private Set<String> getPermissionsByUsername(String username) {
@@ -95,7 +89,13 @@ public class CustomRealm extends AuthorizingRealm {
      * @return
      */
     private String getPasswordByUsername(String username) {
-        return userMap.get(username);
+
+        User user = userDao.getUserByUsername(username);
+
+        if (user != null) {
+            return user.getPassword();
+        }
+        return null;
     }
 
     public static void main(String[] args) {

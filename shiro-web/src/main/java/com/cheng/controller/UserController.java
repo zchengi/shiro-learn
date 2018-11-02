@@ -28,9 +28,14 @@ public class UserController {
         try {
             subject.login(token);
         } catch (AuthenticationException e) {
+            e.printStackTrace();
             return e.getMessage();
         }
 
-        return "登录成功";
+        if (subject.hasRole("admin")) {
+            return "有 admin 权限";
+        }
+
+        return "无 admin 权限";
     }
 }

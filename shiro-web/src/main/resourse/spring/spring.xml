@@ -6,6 +6,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <import resource="spring-dao.xml"/>
+    <import resource="spring-redis.xml"/>
     <context:component-scan base-package="com.cheng"/>
 
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
@@ -21,7 +22,7 @@
                   /testPerms = perms["user:delete"]
                   /testPerms1 = perms["user:delete","user:add"]-->
 
-                /testRole = roles["admin","admin1"]
+                <!--/testRole = roles["admin","admin1"]-->
                 /testRole1 = rolesOr["admin","admin1"]
                 /* = authc
             </value>
@@ -38,6 +39,7 @@
     <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
         <!-- 创建 SecurityManager 对象 -->
         <property name="realm" ref="realm"/>
+        <property name="sessionManager" ref="sessionManager"/>
     </bean>
 
     <bean id="realm" class="com.cheng.shiro.realm.CustomRealm">
@@ -48,4 +50,11 @@
         <property name="hashAlgorithmName" value="md5"/>
         <property name="hashIterations" value="1"/>
     </bean>
+
+    <!--<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">-->
+    <bean id="sessionManager" class="com.cheng.session.CustomSessionManager">
+        <property name="sessionDAO" ref="sessionDao"/>
+    </bean>
+
+    <bean id="sessionDao" class="com.cheng.session.RedisSessionDao"/>
 </beans>

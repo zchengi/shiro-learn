@@ -8,6 +8,10 @@
 <form action="subLogin" method="post">
     用户名：<input type="text" name="username"><br/>
     密 码：<input type="text" name="password"><br/>
+    <input id="rememberMe" type="hidden" name="rememberMe" value="false"/>
+    <input type="checkbox"
+           onclick="document.getElementById('rememberMe').value=document.getElementById('rememberMe').value==='false';"/>
+    记住我<br/>
     <input type="submit" value="提交"/>
 </form>
 </body>

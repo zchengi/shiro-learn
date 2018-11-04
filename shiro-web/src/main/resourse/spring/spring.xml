@@ -41,6 +41,7 @@
         <property name="realm" ref="realm"/>
         <property name="sessionManager" ref="sessionManager"/>
         <property name="cacheManager" ref="cacheManager"/>
+        <property name="rememberMeManager" ref="cookieRememberMeManager"/>
     </bean>
 
     <bean id="realm" class="com.cheng.shiro.realm.CustomRealm">
@@ -61,4 +62,13 @@
     <bean id="sessionDao" class="com.cheng.session.RedisSessionDao"/>
 
     <bean id="cacheManager" class="com.cheng.cache.RedisCacheManager"/>
+
+    <bean id="cookieRememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+        <property name="cookie" ref="cookie"/>
+    </bean>
+
+    <bean id="cookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg value="rememberMe"/>
+        <property name="maxAge" value="600000"/>
+    </bean>
 </beans>

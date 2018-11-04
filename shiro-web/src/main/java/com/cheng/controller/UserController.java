@@ -26,6 +26,8 @@ public class UserController {
         UsernamePasswordToken token = new UsernamePasswordToken(user.getUsername(), user.getPassword());
 
         try {
+            // 设置 shiro 记住我功能
+            token.setRememberMe(user.getRememberMe());
             subject.login(token);
         } catch (AuthenticationException e) {
             e.printStackTrace();

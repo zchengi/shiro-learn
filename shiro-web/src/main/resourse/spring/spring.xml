@@ -40,6 +40,7 @@
         <!-- 创建 SecurityManager 对象 -->
         <property name="realm" ref="realm"/>
         <property name="sessionManager" ref="sessionManager"/>
+        <property name="cacheManager" ref="cacheManager"/>
     </bean>
 
     <bean id="realm" class="com.cheng.shiro.realm.CustomRealm">
@@ -51,10 +52,13 @@
         <property name="hashIterations" value="1"/>
     </bean>
 
+    <!-- 使用默认的 sessionManager 会频繁的操作读 redis 使用自定义的 CustomSessionManager -->
     <!--<bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">-->
     <bean id="sessionManager" class="com.cheng.session.CustomSessionManager">
         <property name="sessionDAO" ref="sessionDao"/>
     </bean>
 
     <bean id="sessionDao" class="com.cheng.session.RedisSessionDao"/>
+
+    <bean id="cacheManager" class="com.cheng.cache.RedisCacheManager"/>
 </beans>
